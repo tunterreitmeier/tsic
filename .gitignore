@@ -1,0 +1,8 @@
+# npm
+/node_modules/
+*.zip
+*.tar.gz
+
+# Code Editor
+/.vscode/
+
