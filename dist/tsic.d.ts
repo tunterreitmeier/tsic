@@ -11,7 +11,7 @@ export declare class Tsic {
     private sensor;
     constructor(dataPin: number, sensorId?: number);
     getDataPin(): Gpio;
-    getTemperature(): Promise<unknown>;
+    getTemperature(): Promise<number>;
     private calculateTemperatureFromZacwire;
 }
 export {};

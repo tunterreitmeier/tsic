@@ -47,18 +47,19 @@ class Tsic {
                 // Level changed to low
                 zacWire.setLastLowTick(tick);
                 if (!zacWire.hasHighTick()) {
-                    const highTickDiff = zacWire.highTickDiff(tick);
-                    if (highTickDiff > 1000) {
-                        zacWire.startOfFirstPacket();
-                        const result = zacWire.getResult();
-                        if (result !== null) {
-                            resolve(this.calculateTemperatureFromZacwire(result));
-                        }
-                        return;
+                    return;
+                }
+                const highTickDiff = zacWire.highTickDiff(tick);
+                if (highTickDiff > 1000) {
+                    zacWire.startOfFirstPacket();
+                    const result = zacWire.getResult();
+                    if (result !== null) {
+                        resolve(this.calculateTemperatureFromZacwire(result));
                     }
-                    if (highTickDiff >= 2 * zacWire.getStrobeTime()) {
-                        zacWire.startOfSecondPacket();
-                    }
+                    return;
+                }
+                if (highTickDiff >= 2 * zacWire.getStrobeTime()) {
+                    zacWire.startOfSecondPacket();
                 }
             });
         });
