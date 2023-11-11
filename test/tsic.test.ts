@@ -1,4 +1,4 @@
-let mockedGpio;
+let mockedGpio: { constructor: jest.Mock; on: jest.Mock };
 jest.mock('pigpio', () => {
   mockedGpio = { constructor: jest.fn(), on: jest.fn() };
   return { Gpio: jest.fn(() => mockedGpio) };
