@@ -1,6 +1,14 @@
-let mockedGpio: { constructor: jest.Mock; on: jest.Mock };
+let mockedGpio: {
+  constructor: jest.Mock;
+  on: jest.Mock;
+  removeListener: jest.Mock;
+};
 jest.mock('pigpio', () => {
-  mockedGpio = { constructor: jest.fn(), on: jest.fn() };
+  mockedGpio = {
+    constructor: jest.fn(),
+    on: jest.fn(),
+    removeListener: jest.fn(),
+  };
   return { Gpio: jest.fn(() => mockedGpio) };
 });
 
@@ -44,6 +52,8 @@ describe('Tsic', () => {
 
     const callback = mockedGpio.on.mock.calls[0][1];
     callback(0, 1000);
+
+    expect(mockedGpio.removeListener).toHaveBeenCalled();
 
     return promise.then((temperature: number) => {
       // according to the datasheet, the temperature should be 25°C for 0x2ff
