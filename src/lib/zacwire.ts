@@ -66,15 +66,20 @@ export class Zacwire {
 
     this.secondPacket = this.bufferToInt();
     this.receivedBits = [];
+    this.strobeTime = null;
   }
 
   public startOfSecondPacket(): void {
+    if (this.receivedBits.length !== 9) {
+      return;
+    }
     if (!this.checkParity()) {
       return this.reset();
     }
 
     this.firstPacket = this.bufferToInt();
     this.receivedBits = [];
+    this.strobeTime = null;
   }
 
   public getResult(): number | null {
