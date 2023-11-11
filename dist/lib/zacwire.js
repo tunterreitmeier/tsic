@@ -55,13 +55,18 @@ class Zacwire {
         }
         this.secondPacket = this.bufferToInt();
         this.receivedBits = [];
+        this.strobeTime = null;
     }
     startOfSecondPacket() {
+        if (this.receivedBits.length !== 9) {
+            return;
+        }
         if (!this.checkParity()) {
             return this.reset();
         }
         this.firstPacket = this.bufferToInt();
         this.receivedBits = [];
+        this.strobeTime = null;
     }
     getResult() {
         if (this.firstPacket === null || this.secondPacket === null) {
@@ -78,8 +83,6 @@ class Zacwire {
         return (this.receivedBits.reduce((acc, val) => acc + val, 0) % 2 === parityBit);
     }
     reset() {
-        this.lastLowTick = null;
-        this.lastHighTick = null;
         this.strobeTime = null;
         this.receivedBits = [];
         this.firstPacket = null;

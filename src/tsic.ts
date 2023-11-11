@@ -75,7 +75,7 @@ export class Tsic {
           zacWire.startOfFirstPacket();
           const result = zacWire.getResult();
           if (result !== null) {
-            this.dataPin.removeListener('alert', listener);
+            this.dataPin.removeListener('alert', listener).disableAlert();
             resolve(this.calculateTemperatureFromZacwire(result));
           }
           return;

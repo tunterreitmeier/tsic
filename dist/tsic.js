@@ -28,7 +28,7 @@ class Tsic {
     getTemperature() {
         return new Promise((resolve) => {
             const zacWire = new zacwire_1.Zacwire();
-            this.dataPin.on('alert', (level, tick) => {
+            const listener = (level, tick) => {
                 if (level === 1) {
                     zacWire.setLastHighTick(tick);
                     if (!zacWire.hasLowTick()) {
@@ -54,6 +54,7 @@ class Tsic {
                     zacWire.startOfFirstPacket();
                     const result = zacWire.getResult();
                     if (result !== null) {
+                        this.dataPin.removeListener('alert', listener).disableAlert();
                         resolve(this.calculateTemperatureFromZacwire(result));
                     }
                     return;
@@ -62,7 +63,8 @@ class Tsic {
                     highTickDiff >= 2 * zacWire.getStrobeTime()) {
                     zacWire.startOfSecondPacket();
                 }
-            });
+            };
+            this.dataPin.on('alert', listener);
         });
     }
     calculateTemperatureFromZacwire(result) {
