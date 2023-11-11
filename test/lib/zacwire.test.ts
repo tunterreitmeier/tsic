@@ -78,8 +78,9 @@ describe('Zacwire', () => {
     appendBitsFromBuffer(zacwire, '000100011');
     zacwire.startOfSecondPacket();
 
-    expect(zacwire.hasLowTick()).toBe(false);
-    expect(zacwire.hasHighTick()).toBe(false);
+    // ticks should not be reset
+    expect(zacwire.hasLowTick()).toBe(true);
+    expect(zacwire.hasHighTick()).toBe(true);
     expect(zacwire.hasStrobeTime()).toBe(false);
     expect(zacwire['receivedBits'].length).toBe(0);
     expect(zacwire['firstPacket']).toBe(null);

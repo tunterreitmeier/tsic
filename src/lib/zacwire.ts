@@ -96,8 +96,6 @@ export class Zacwire {
   }
 
   private reset(): void {
-    this.lastLowTick = null;
-    this.lastHighTick = null;
     this.strobeTime = null;
     this.receivedBits = [];
     this.firstPacket = null;
