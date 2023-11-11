@@ -14,7 +14,8 @@
     "build": "tsc",
     "lint": "eslint .",
     "fix:style": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
