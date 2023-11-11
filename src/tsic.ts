@@ -80,7 +80,10 @@ export class Tsic {
           return;
         }
 
-        if (highTickDiff >= 2 * zacWire.getStrobeTime()) {
+        if (
+          zacWire.hasStrobeTime() &&
+          highTickDiff >= 2 * zacWire.getStrobeTime()
+        ) {
           zacWire.startOfSecondPacket();
         }
       });
