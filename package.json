@@ -1,10 +1,13 @@
 {
   "name": "tsic-sensor",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "A simple node.js library for digital TSIC temperature sensors",
   "main": "dist/tsic.js",
   "types": "dist/tsic.d.ts",
   "type": "commonjs",
+  "engines": {
+    "node": ">=16"
+  },
   "files": [
     "dist",
     "LICENSE",
