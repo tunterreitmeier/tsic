@@ -26,8 +26,13 @@ class Tsic {
         return this.dataPin;
     }
     getTemperature() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const zacWire = new zacwire_1.Zacwire();
+            const timeOut = setTimeout(function () {
+                reject('Did not receive any data from TSIC within 5 seconds');
+            }, 5000);
+            timeOut.unref();
+            this.dataPin.once('alert', () => clearTimeout(timeOut));
             const listener = (level, tick) => {
                 if (level === 1) {
                     zacWire.setLastHighTick(tick);
@@ -55,7 +60,10 @@ class Tsic {
                     const result = zacWire.getResult();
                     if (result !== null) {
                         this.dataPin.removeListener('alert', listener).disableAlert();
-                        resolve(this.calculateTemperatureFromZacwire(result));
+                        if (!this.resultSanityCheck(result)) {
+                            return reject(`Something went wrong: Zacwire result (${result}) is out of range (0-2048)`);
+                        }
+                        return resolve(this.calculateTemperatureFromZacwire(result));
                     }
                     return;
                 }
@@ -71,6 +79,9 @@ class Tsic {
         // Zacwire result is between 0 (minTemperature) and 2048 (maxTemperature)
         const temperatureRange = this.sensor.maxTemperature - this.sensor.minTemperature;
         return (result / 2048) * temperatureRange + this.sensor.minTemperature;
+    }
+    resultSanityCheck(result) {
+        return result >= 0 && result <= 2048;
     }
 }
 exports.Tsic = Tsic;
