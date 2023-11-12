@@ -1,4 +1,7 @@
-jest.mock('pigpio', () => jest.fn());
+jest.mock('pigpio', () => ({
+  tickDiff: jest.fn().mockImplementation((a: number, b: number) => b - a),
+}));
+import { tickDiff } from 'pigpio';
 import { Zacwire } from '../../src/lib/zacwire';
 
 describe('Zacwire', () => {
@@ -85,5 +88,13 @@ describe('Zacwire', () => {
     expect(zacwire['receivedBits'].length).toBe(0);
     expect(zacwire['firstPacket']).toBe(null);
     expect(zacwire['secondPacket']).toBe(null);
+  });
+
+  test('tickdiff', () => {
+    zacwire.setLastHighTick(100);
+    zacwire.setLastLowTick(200);
+    expect(zacwire.highTickDiff(200)).toBe(100);
+    expect(zacwire.lowTickDiff(400)).toBe(200);
+    expect(tickDiff).toHaveBeenCalledTimes(2);
   });
 });
