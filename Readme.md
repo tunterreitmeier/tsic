@@ -17,13 +17,14 @@ Smaple usage:
 ```javascript
 import { Tsic } from 'tsic-sensor';
 
-const gpioPin = 16;
+// The GPIO pin number to which the sensor (data pin) is connected
+const gpioPin = x;
 const tsic = new Tsic(gpioPin);
 
 tsic
   .getTemperature()
   .then((temperature) => console.log('Temperature: %d C', temperature))
-  .catch((error) => console.error(error));
+  .catch(console.error);
 ```
 
 ### pigpio and why privileged?
