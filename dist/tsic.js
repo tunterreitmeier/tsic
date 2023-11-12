@@ -11,12 +11,14 @@ class Tsic {
     };
     static SENSORS = [Tsic.TSIC_206.id];
     dataPin;
+    dataPinNumber;
     sensor;
     constructor(dataPin, sensorId = Tsic.TSIC_206.id) {
         if (!Tsic.SENSORS.includes(sensorId)) {
             throw new Error('This library does currently only support TSIC 206');
         }
         this.sensor = Tsic.TSIC_206;
+        this.dataPinNumber = dataPin;
         this.dataPin = new pigpio_1.Gpio(dataPin, {
             mode: pigpio_1.Gpio.INPUT,
             alert: true,
@@ -28,11 +30,6 @@ class Tsic {
     getTemperature() {
         return new Promise((resolve, reject) => {
             const zacWire = new zacwire_1.Zacwire();
-            const timeOut = setTimeout(function () {
-                reject('Did not receive any data from TSIC within 5 seconds');
-            }, 5000);
-            timeOut.unref();
-            this.dataPin.once('alert', () => clearTimeout(timeOut));
             const listener = (level, tick) => {
                 if (level === 1) {
                     zacWire.setLastHighTick(tick);
@@ -72,6 +69,7 @@ class Tsic {
                     zacWire.startOfSecondPacket();
                 }
             };
+            this.enableTimeout(5000, listener, reject);
             this.dataPin.on('alert', listener);
         });
     }
@@ -82,6 +80,20 @@ class Tsic {
     }
     resultSanityCheck(result) {
         return result >= 0 && result <= 2048;
+    }
+    enableTimeout(timeoutInMs, listener, reject) {
+        const timeoutInS = (timeoutInMs / 1000).toFixed(0);
+        const timeOut = setTimeout(() => {
+            reject('Did not receive any data from TSIC within ' +
+                timeoutInS +
+                ' seconds.\n' +
+                "Have you connected the sensor's data pin to GPIO " +
+                this.dataPinNumber +
+                ' and correctly powered the sensor?\n');
+            this.dataPin.removeListener('alert', listener).disableAlert();
+        }, timeoutInMs);
+        timeOut.unref();
+        this.dataPin.once('alert', () => clearTimeout(timeOut));
     }
 }
 exports.Tsic = Tsic;

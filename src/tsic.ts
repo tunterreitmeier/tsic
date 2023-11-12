@@ -20,6 +20,8 @@ export class Tsic {
 
   private dataPin: Gpio;
 
+  private dataPinNumber: number;
+
   private sensor: Sensor;
 
   constructor(dataPin: number, sensorId: SensorId = Tsic.TSIC_206.id) {
@@ -28,6 +30,8 @@ export class Tsic {
     }
 
     this.sensor = Tsic.TSIC_206;
+
+    this.dataPinNumber = dataPin;
 
     this.dataPin = new Gpio(dataPin, {
       mode: Gpio.INPUT,
@@ -42,13 +46,6 @@ export class Tsic {
   getTemperature(): Promise<number> {
     return new Promise((resolve, reject) => {
       const zacWire = new Zacwire();
-
-      const timeOut = setTimeout(function () {
-        reject('Did not receive any data from TSIC within 5 seconds');
-      }, 5000);
-      timeOut.unref();
-
-      this.dataPin.once('alert', () => clearTimeout(timeOut));
 
       const listener = (level: 0 | 1, tick: number) => {
         if (level === 1) {
@@ -103,6 +100,8 @@ export class Tsic {
         }
       };
 
+      this.enableTimeout(5000, listener, reject);
+
       this.dataPin.on('alert', listener);
     });
   }
@@ -116,5 +115,27 @@ export class Tsic {
 
   private resultSanityCheck(result: number): boolean {
     return result >= 0 && result <= 2048;
+  }
+
+  private enableTimeout(
+    timeoutInMs: number,
+    listener: (level: 0 | 1, tick: number) => void,
+    reject: (reason: string) => void,
+  ): void {
+    const timeoutInS = (timeoutInMs / 1000).toFixed(0);
+    const timeOut = setTimeout(() => {
+      reject(
+        'Did not receive any data from TSIC within ' +
+          timeoutInS +
+          ' seconds.\n' +
+          "Have you connected the sensor's data pin to GPIO " +
+          this.dataPinNumber +
+          ' and correctly powered the sensor?\n',
+      );
+      this.dataPin.removeListener('alert', listener).disableAlert();
+    }, timeoutInMs);
+    timeOut.unref();
+
+    this.dataPin.once('alert', () => clearTimeout(timeOut));
   }
 }
