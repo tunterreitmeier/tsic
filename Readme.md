@@ -1,6 +1,6 @@
 # TSIC Digital Sensor library
 
-This library aims at enabling to easily read the temperature of TSIC sensors via the Zacwire protocol.
+This library aims at enabling to easily read the temperature of TSIC sensors via the Zacwire protocol with a Raspberry Pi.
 
 > ⚠️ Currently, this library is only able to read TSIC 206 sensors. As this is the only sensor I have at home, I'm not able to test and verify other sensors. Please feel free to contact me or open a PR for other sensors. From reading their datasheets, it should be a fairly simple process to enable them.
 
