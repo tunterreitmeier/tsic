@@ -1,6 +1,6 @@
 {
   "name": "tsic-sensor",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "A simple node.js library for digital TSIC temperature sensors on a Raspberry Pi",
   "main": "dist/tsic.js",
   "types": "dist/tsic.d.ts",
